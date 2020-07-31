@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <!-- Webpage Title -->
+    <title>쇼핑몰</title>
+
+    <!-- Required meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="/static/images/favicon.png">
+
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+    <script>
+        function order() {
+            let name = $('#order-name').val(),
+                count = $('#order-count').val(),
+                address = $('#order-address').val(),
+                phone = $('#order-phone').val();
+
+            function createOrder() {
+                let template = `<tr>
+                        <td>${name}</td>
+                        <td>${count}</td>
+                        <td>${address}</td>
+                       <td>${phone}</td>
+                    </tr>`;
+
+                $('#order-item-box').append(template);
+                $('.form-control').val('');
+            }
+
+            if(name == '') {
+                alert('이름을 입력해주세요.');
+            } else if(count == '') {
+                alert('수량을 선택해주세요.');
+            } else if(address == '') {
+                alert('주소를 입력해주세요.');
+            } else if(phone == '') {
+                alert('전화번호를 입력해주세요.');
+            } else {
+                alert('주문이 완료되었습니다!');
+
+                createOrder();
+            }
+        }
+
+        function exchange() {
+            $.ajax({
+                type: "GET",
+                url: "https://api.manana.kr/exchange/rate.json",
+                data: {},
+                success: function (response) {
+                    for (let i = 0; i < response.length; i++) {
+                        if (response[i].name == 'USDKRW=X') {
+                            $('#exchange').text(`달러-원 환율 : ${response[i].rate}`);
+
+                            return;
+                        }
+                    }
+                }
+            });
+        }
+
+        function inNumber() {
+            $(document).on('keyup', '#order-phone', function() {
+                $(this).val(
+                    $(this).val().replace(/[^0-9]/g, "").replace(/(^02|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})$/,"$1-$2-$3").replace("--", "-")
+                );
+            });
+        }
+
+        $(document).ready(function() {
+            exchange();
+            inNumber();
+        });
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Nanum+Gothic:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="main.css">
+</head>
+<body>
+    <div class="product-wrap">
+        <h1 class="hidden">고프로 상품 페이지</h1>
+        <div class="product-img">
+            <img src="https://gopro.com/on/demandware.static/-/Library-Sites-sharedGoProLibrary/default/dw5763dfbf/images/camera-landing-page/H8BB/h8bb-1366-2x.svg" alt="">
+        </div>
+        <div class="product-info">
+            <h2 class="product-tit">HERO8 Black</h2>
+            <strong class="product-price">₩580,000</strong>
+            <p class="product-desc">
+                HERO8 Black 번들에는 새로운 HERO8 Black, Shorty 그립, 헤드 스트랩, 32GB SD 카드, 예비 배터리가 모두 포함되어 있습니다.
+                흔들림 없는 HyperSmooth 2.0 안정화 기능과 내장 마운트를 갖춘 HERO8이 선보이는 새로운 차원을 경험하세요.
+            </p>
+            <p id="exchange" class="product-exchange"></p>
+        </div>
+        <div class="product-form">
+            <div class="form-group row">
+                <label for="order-name" class="col-sm-3 col-form-label">주문자</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="order-name" placeholder="이름을 입력해주세요">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="order-count" class="col-sm-3 col-form-label">수량</label>
+                <div class="col-sm-9">
+                    <select class="form-control" id="order-count">
+                        <option selected value="">수량을 선택해주세요</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="order-address" class="col-sm-3 col-form-label">주소</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="order-address" placeholder="주소를 입력해주세요">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="order-phone" class="col-sm-3 col-form-label">전화번호</label>
+                <div class="col-sm-9">
+                    <input type="text" maxlength="13" class="form-control" id="order-phone" placeholder="전화번호">
+                </div>
+            </div>
+        </div>
+        <div class="product-btn">
+            <button type="button" class="btn btn-primary btn-block btn-lg" onclick="order()">주문하기</button>
+        </div>
+
+        <div class="order-list">
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th scope="col">이름</th>
+                        <th scope="col">수량</th>
+                        <th scope="col">주소</th>
+                        <th scope="col">전화번호</th>
+                    </tr>
+                </thead>
+                <tbody id="order-item-box">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
