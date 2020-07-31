@@ -22,4 +22,5 @@ for tr in trs:
         'title': title,
         'artist': artist
     }
+    
     db.genie.insert_one(list)
